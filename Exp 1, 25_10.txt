@@ -1,0 +1,272 @@
+create table PUBLISHER(
+Name varchar(20) primary key,
+Address varchar(30),
+Phone int
+);
+
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ NAME                                      NOT NULL VARCHAR2(20)
+ ADDRESS                                            VARCHAR2(30)
+ PHONE                                              NUMBER(38)
+
+create table BOOK(
+Book_ID int primary key,
+Title varchar(20),
+Publisher_Name varchar(20),
+Published_Year int,
+foreign key (Publisher_Name) 
+references PUBLISHER(Name) on delete cascade 
+);
+
+Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ BOOK_ID                                   NOT NULL NUMBER(38)
+ TITLE                                              VARCHAR2(20)
+ PUBLISHER_NAME                                     VARCHAR2(20)
+ PUBLISHED_YEAR                                     NUMBER(38)
+
+
+create table BOOK_AUTHOR(
+Book_ID int primary key,
+Author_Name varchar(20),
+foreign key (Book_ID)
+references BOOK(Book_ID) on delete cascade
+);
+
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ BOOK_ID                                   NOT NULL NUMBER(38)
+ AUTHOR_NAME                                        VARCHAR2(20)
+
+create table LIBRARY_BRANCH(
+Branch_ID varchar(20) primary key,
+Branch_Name varchar(20),
+Address varchar(30)
+);
+
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ BRANCH_ID                                 NOT NULL VARCHAR2(20)
+ BRANCH_NAME                                        VARCHAR2(20)
+ ADDRESS                                            VARCHAR2(30)
+
+create table BOOK_COPIES(
+Book_ID int,
+Branch_ID varchar(20),
+No_Of_Copies int,
+primary key(Book_ID,Branch_ID),
+foreign key (Book_ID)
+references BOOK(Book_ID) on delete cascade,
+foreign key (Branch_ID)
+references LIBRARY_BRANCH(Branch_ID) on delete cascade
+);
+
+Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ BOOK_ID                                   NOT NULL NUMBER(38)
+ BRANCH_ID                                 NOT NULL VARCHAR2(20)
+ NO_OF_COPIES                                       NUMBER(38)
+
+
+create table BOOK_LENDING(
+Book_ID int,
+Branch_ID varchar(20),
+Card_No int,
+Date_Out date, 
+Due_Date date,
+primary key(Book_ID,Branch_ID,Card_No),
+foreign key (Book_ID)
+references BOOK(Book_ID) on delete cascade,
+foreign key (Branch_ID)
+references LIBRARY_BRANCH(Branch_ID) on delete cascade
+);
+
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ BOOK_ID                                   NOT NULL NUMBER(38)
+ BRANCH_ID                                 NOT NULL VARCHAR2(20)
+ CARD_NO                                   NOT NULL NUMBER(38)
+ DATE_OUT                                           DATE
+ DUE_DATE                                           DATE
+
+insert into PUBLISHER
+values('Penguin Books','Pune',3213456461);
+insert into PUBLISHER
+values('Pearson','Mumbai',4651258954);
+insert into PUBLISHER
+values('Oswald','Bangalore',2354125624);
+insert into PUBLISHER
+values('National Books','Pune',2658451264);
+
+NAME                 ADDRESS                             PHONE
+-------------------- ------------------------------ ----------
+Penguin Books        Pune                           3213456461
+Pearson              Mumbai                         4651258954
+Oswald               Bangalore                      2354125624
+National Books       Pune                           2658451264
+
+insert into BOOK
+values(1235,'OS','Penguin Books', 2021);
+insert into BOOK
+values(1452,'AI','Pearson', 2021);
+insert into BOOK
+values(1584,'TOC','Pearson', 2020);
+insert into BOOK
+values(5842,'ADE','Oswald', 2019);
+insert into BOOK
+values(4512,'ADP','National Books', 2020);
+
+   BOOK_ID TITLE                PUBLISHER_NAME       PUBLISHED_YEAR
+---------- -------------------- -------------------- --------------
+      1235 OS                   Penguin Books                  2021
+      1452 AI                   Pearson                        2021
+      1584 TOC                  Pearson                        2020
+      5842 ADE                  Oswald                         2019
+      4512 ADP                  National Books                 2020
+
+insert into BOOK_AUTHOR
+values(1235,'Richard');
+insert into BOOK_AUTHOR
+values(1452,'Sneha.H');
+insert into BOOK_AUTHOR
+values(1584,'Dr.Vinod');
+insert into BOOK_AUTHOR
+values(5842,'Navnathe');
+insert into BOOK_AUTHOR
+values(4512,'David');
+
+ BOOK_ID AUTHOR_NAME
+---------- --------------------
+      1235 Richard
+      1452 Sneha.H
+      1584 Dr.Vinod
+      5842 Navnathe
+      4512 David
+
+insert into LIBRARY_BRANCH
+values(125,'Illiterati','Bangalore');
+insert into LIBRARY_BRANCH
+values(154,'Ignite','Mangalore');
+insert into LIBRARY_BRANCH
+values(185,'Corner Store','Pune');
+insert into LIBRARY_BRANCH
+values(254,'Sapna','Mumbai');
+
+
+BRANCH_ID            BRANCH_NAME          ADDRESS
+-------------------- -------------------- ------------------------------
+125                  Illiterati           Bangalore
+154                  Ignite               Mangalore
+185                  Corner Store         Pune
+254                  Sapna                Mumbai
+
+insert into BOOK_COPIES
+values(1235,125,5);
+insert into BOOK_COPIES
+values(1452,125,15);
+insert into BOOK_COPIES
+values(1584,154,20);
+insert into BOOK_COPIES
+values(5842,185,10);
+insert into BOOK_COPIES
+values(4512,254,7);
+
+   BOOK_ID BRANCH_ID            NO_OF_COPIES
+---------- -------------------- ------------
+      1235 125                             5
+      1452 125                            15
+      1584 154                            20
+      5842 185                            10
+      4512 254                             7
+
+insert into BOOK_LENDING
+values(1235,125,1,'1/Oct/2021','6/Oct/2021');
+insert into BOOK_LENDING
+values(1452,125,1,'2/Oct/2021','7/Oct/2021');
+insert into BOOK_LENDING
+values(1584,154,1,'3/Oct/2021','8/Oct/2021');
+insert into BOOK_LENDING
+values(5842,185,1,'4/Oct/2021','9/Oct/2021');
+insert into BOOK_LENDING
+values(4512,254,1,'5/Oct/2021','10/Oct/2021');
+
+  BOOK_ID BRANCH_ID               CARD_NO DATE_OUT  DUE_DATE
+---------- -------------------- ---------- --------- ---------
+      1235 125                           1 02-JAN-17 06-OCT-21
+      1452 125                           1 03-JAN-17 07-OCT-21
+      1584 154                           1 04-JAN-17 08-OCT-21
+      5842 185                           1 05-JAN-17 09-OCT-21
+      4512 254                           1 05-OCT-21 10-OCT-21
+
+Query 1:
+
+select b.book_id, b.title, b.publisher_name, a.author_name, n.no_of_copies, l.branch_id
+from BOOK b, BOOK_AUTHOR a, BOOK_COPIES n, LIBRARY_BRANCH l
+where b.book_id=a.book_id
+and b.book_id=n.book_id
+and n.branch_id=l.branch_id;
+
+  BOOK_ID TITLE                PUBLISHER_NAME       AUTHOR_NAME          NO_OF_COPIES BRANCH_ID
+---------- -------------------- -------------------- -------------------- ------------ --------------------
+      1235 OS                   Penguin Books        Richard                         5 125
+      1452 AI                   Pearson              Sneha.H                        15 125
+      1584 TOC                  Pearson              Dr.Vinod                       20 154
+      5842 ADE                  Oswald               Navnathe                       10 185
+      4512 ADP                  National Books       David                           7 254
+
+Query 2:
+
+select card_no
+from BOOK_LENDING
+where date_out between '1/jan/2017' and '1/jul/2017'
+group by card_no
+having count(*)>3;
+
+   CARD_NO
+----------
+         1
+
+Query 3:
+
+delete from BOOK 
+where book_id = 1235;
+
+   BOOK_ID TITLE                PUBLISHER_NAME       PUBLISHED_YEAR
+---------- -------------------- -------------------- --------------
+      1452 AI                   Pearson                        2021
+      1584 TOC                  Pearson                        2020
+      5842 ADE                  Oswald                         2019
+      4512 ADP                  National Books                 2020
+
+Query 4:
+
+create view a_publications as
+select published_year
+from book a;
+
+select * from a_publications;
+
+PUBLISHED_YEAR
+--------------
+          2021
+          2020
+          2019
+          2020
+
+Query 5:
+
+create view a_books as
+select b.book_id, b.title, l.branch_id, n.no_of_copies
+from book b, book_copies n, library_branch l
+where b.book_id=n.book_id
+and n.branch_id=l.branch_id;
+
+select * from a_books;
+
+ BOOK_ID TITLE                BRANCH_ID            NO_OF_COPIES
+---------- -------------------- -------------------- ------------
+      1452 AI                   125                            15
+      1584 TOC                  154                            20
+      5842 ADE                  185                            10
+      4512 ADP                  254                             7

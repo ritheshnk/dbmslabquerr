@@ -1,0 +1,349 @@
+CREATE TABLE STUDENT2
+(
+  Usn varchar(10),
+  Sname varchar(10),
+  Address varchar(10),
+  phone varchar(10),
+  gender varchar(1),
+  primary key(Usn)
+);
+
+
+
+SQL> CREATE TABLE SEMSEC2
+  2  (
+  3    Ssid varchar(6),
+  4    Sem int,
+  5    Sec varchar(2),
+  6    primary key(Ssid)
+  7  );
+
+
+SQL> CREATE TABLE CLASS
+  2  (
+  3    Usn varchar(10),
+  4    Ssid varchar(6),
+  5    primary key(Usn,Ssid),
+  6    foreign key(Usn) references STUDENT2(Usn),
+  7    foreign key(Ssid) references SEMSEC2(Ssid)
+  8  );
+
+SQL> CREATE TABLE IAMARKS
+  2  (
+  3    Usn varchar(10),
+  4    Subcode varchar(7),
+  5    Ssid varchar(6),
+  6    Test1 int,
+  7    Test2 int,
+  8    Test3 int,
+  9    Finalia int,
+ 10    primary key(Usn,Subcode,Ssid),
+ 11    foreign key(Usn) references STUDENT2(Usn),
+ 12    foreign key(Ssid) references SEMSEC2(Ssid),
+ 13    foreign key(Subcode) references SUBJECT(Subcode)
+ 14  );
+
+Table created.
+
+
+
+SQL> CREATE TABLE SUBJECT
+  2  (
+  3    Subcode varchar(7),
+  4    Title varchar(20),
+  5    Sem int,
+  6    Credits int,
+  7    primary key(Subcode)
+  8  );
+
+
+SQL> insert into STUDENT2 values
+  2  ('&Usn','&Sname','&Address','&phone','&gender');
+Enter value for usn: 4all4is001
+Enter value for sname: akshay
+Enter value for address: mangaluru
+Enter value for phone: 8877891123
+Enter value for gender: m
+old   2: ('&Usn','&Sname','&Address','&phone','&gender')
+new   2: ('4all4is001','akshay','mangaluru','8877891123','m')
+
+1 row created.
+
+
+
+SQL> select * from STUDENT2
+  2  ;
+
+USN        SNAME      ADDRESS    PHONE      G
+---------- ---------- ---------- ---------- -
+4all4is001 akshay     mangaluru  8877891123 m
+4all4is002 sandhya    bengaluru  7722826921 f
+4all4is003 trupti     bengaluru  7712312314 f
+4all4is004 supriya    mangaluru  8877896121 f
+4all5is010 abhay      bengluru   9900211201 m
+4all5is011 darshan    bengaluru  9923211099 m
+4all5is012 ashwitha   bengaluru  7854354900 f
+4all6s020
+4all6is020 ajay       tumkur     7859232455 m
+4all6is021 sajana     kundapura  4852167395 f
+4all6is022 krishna    bellary    45         m
+
+USN        SNAME      ADDRESS    PHONE      G
+---------- ---------- ---------- ---------- -
+4all6is023 santosh    mangaluru  8812332201 m
+4all7is040 lokesh     kalburgi   9900232201 m
+4all7is041 ashika     shimoga    4575826285 f
+4all7is042 vinayaka   bijapura   1566698587 m
+
+15 rows selected.
+
+
+SQL> insert into SEMSEC2 values
+  2  ('&Ssid','&Sem','&Sec');
+Enter value for ssid: ise8a
+Enter value for sem: 8
+Enter value for sec: a
+old   2: ('&Ssid','&Sem','&Sec')
+new   2: ('ise8a','8','a')
+
+1 row created.
+
+
+SQL> select * from SEMSEC2;
+
+SSID          SEM SE
+------ ---------- --
+ise8a           8 a
+ise8b           8 b
+ise8c           8 c
+ise6a           6 a
+ise4a           4 a
+ise4b           4 b
+ise4c           4 b
+ise2a           2 a
+
+8 rows selected.
+
+SQL> insert into CLASS values
+  2  ('&Usn','&Ssid');
+Enter value for usn: 4all4is001
+Enter value for ssid: ise8a
+old   2: ('&Usn','&Ssid')
+new   2: ('4all4is001','ise8a')
+
+1 row created.
+
+SQL> select * from CLASS;
+
+USN        SSID
+---------- ------
+4all4is001 ise8a
+4all4is002 ise8a
+4all4is003 ise8b
+4all4is004 ise8c
+4all5is010 ise6a
+4all5is011 ise6a
+4all5is012 ise6a
+4all6is020 ise4a
+4all6is021 ise4b
+4all6is022 ise4c
+4all6is023 ise4c
+
+USN        SSID
+---------- ------
+4all7is040 ise2a
+4all7is041 ise2a
+4all7is042 ise2a
+
+14 rows selected.
+
+
+SQL> insert into SUBJECT values
+  2  ('&Subcode','&Title','&Sem','&Credits');
+Enter value for subcode: 10is81
+Enter value for title: PW
+Enter value for sem: 8
+Enter value for credits: 4
+old   2: ('&Subcode','&Title','&Sem','&Credits')
+new   2: ('10is81','PW','8','4')
+
+1 row created.
+
+SQL> select * from SUBJECT;
+
+SUBCODE TITLE                       SEM    CREDITS
+------- -------------------- ---------- ----------
+10is81  PW                            8          4
+10is82  INS                           8          4
+10is188 PWL                           8          2
+15is61  CN                            6          4
+15is62  DBMS                          6          4
+15is41  DMS                           4          4
+15is42  ADE                           4          4
+15che21 Chemistry                     2          4
+15pcd22 PCD                           2          4
+
+9 rows selected.
+
+SQL> insert into IAMARKS values
+  2  ('&Usn','&Subcode','&Ssid','&Test1','&Test2','&Test3','&Finalia');
+Enter value for usn: 4all4is001
+Enter value for subcode: 10is81
+Enter value for ssid: ise8a
+Enter value for test1: 15
+Enter value for test2: 16
+Enter value for test3: 18
+Enter value for finalia: 30
+old   2: ('&Usn','&Subcode','&Ssid','&Test1','&Test2','&Test3','&Finalia')
+new   2: ('4all4is001','10is81','ise8a','15','16','18','30')
+
+1 row created.
+
+SQL> select * from IAMARKS;
+
+USN        SUBCODE SSID        TEST1      TEST2      TEST3    FINALIA
+---------- ------- ------ ---------- ---------- ---------- ----------
+4all4is001 10is81  ise8a          15         16         18         30
+4all4is001 10is82  ise8a          10          9          6         28
+4all4is003 10is188 ise8b          15          5          9         45
+4all4is004 10is82  ise8c          20         15         35         44
+4all5is011 15is62  ise6a          17         20         20         32
+4all6is022 15is41  ise4c          10         25         25         39
+4all6is023 15is42  ise4c          19         13         16         26
+4all7is042 15pcd22 ise2a           9         14         13         25
+
+8 rows selected.
+
+
+
+SQL> select s.*,ss.Sem,ss.Sec
+  2  from STUDENT2 s,SEMSEC2 ss,CLASS c
+  3  where s.Usn=c.Usn and ss.Ssid=c.Ssid
+  4  and ss.Sem=4 and ss.Sec='c';
+
+USN        SNAME      ADDRESS    PHONE      G        SEM SE
+---------- ---------- ---------- ---------- - ---------- --
+4all6is022 krishna    bellary    45         m          4 b
+4all6is023 santosh    mangaluru  8812332201 m          4 b
+
+SQL> select ss.Sem, ss.Sec,s.gender,count(s.gender) as count
+  2  from STUDENT2 s,SEMSEC2 ss,CLASS c
+  3  where s.Usn=c.Usn and ss.Ssid=c.Ssid
+  4  group by ss.Sem,ss.Sec,s.gender
+  5  order by SEM;
+
+       SEM SE G      COUNT
+---------- -- - ----------
+         2 a  f          1
+         2 a  m          2
+         4 a  m          1
+         4 b  f          1
+         4 b  m          2
+         6 a  f          1
+         6 a  m          2
+         8 a  f          1
+         8 a  m          1
+         8 b  f          1
+         8 c  f          1
+
+11 rows selected.
+
+
+SQL> create view Test1_view as
+  2  select Test1,Subcode
+  3  from IAMARKS
+  4  where Usn='4all4is001';
+
+View created.
+
+SQL> select * from Test1_view;
+
+     TEST1 SUBCODE
+---------- -------
+        15 10is81
+        10 10is82
+
+
+
+
+SQL> create or replace procedure AVGMARKS is
+  2  cursor c_iamarks is
+  3  select      greatest(Test1,Test2) as a, greatest(Test1,Test3) as b, greatest(Test3,Test2) as c
+  4  from IAMARKS
+  5  where Finalia is null for update;
+  6
+  7  c_a number;
+  8  c_b number;
+  9  c_c number;
+ 10  c_sm number;
+ 11  c_av number;
+ 12
+ 13  begin
+ 14  open c_iamarks;
+ 15  loop
+ 16     fetch c_iamarks into c_a,c_b,c_c;
+ 17        exit when c_iamarks%notfound;
+ 18
+ 19  if (c_a != c_b) then
+ 20          c_sm:=c_a+c_b;
+ 21      else
+ 22          c_sm:=c_a+c_c;
+ 23      end if;
+ 24
+ 25  c_av:=c_sm/2;
+ 26
+ 27  update IAMARKS set Finalia=c_av  where current of c_iamarks;
+ 28  end loop;
+ 29  close c_iamarks;
+ 30  end;
+ 31  /
+
+Procedure created.
+
+SQL> begin
+  2  AVGMARKS;
+  3  end;
+  4  /
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from iamarks;
+
+USN        SUBCODE SSID        TEST1      TEST2      TEST3    FINALIA
+---------- ------- ------ ---------- ---------- ---------- ----------
+4all4is001 10is81  ise8a          15         16         18         30
+4all4is001 10is82  ise8a          10          9          6         28
+4all4is003 10is188 ise8b          15          5          9         45
+4all4is004 10is82  ise8c          20         15         35         44
+4all5is011 15is62  ise6a          17         20         20         32
+4all6is022 15is41  ise4c          10         25         25         39
+4all6is023 15is42  ise4c          19         13         16         26
+4all7is042 15pcd22 ise2a           9         14         13         25
+
+8 rows selected.
+
+
+
+SQL> select s.Usn,s.Sname,s.Address,s.phone,s.gender,
+  2  (case
+  3  when ia.Finalia between 30 and 50 then 'outstanding'
+  4  when ia.Finalia between 26 and 29 then 'average'
+  5  else 'weak'
+  6  end) as cat
+  7  from STUDENT2 s,SEMSEC2 ss,IAMARKS ia,SUBJECT sub
+  8  where s.Usn=ia.Usn
+  9  and ss.Ssid=ia.Ssid
+ 10  and sub.Subcode=ia.Subcode
+ 11  and sub.sem=8;
+
+USN        SNAME      ADDRESS    PHONE      G CAT
+---------- ---------- ---------- ---------- - -----------
+4all4is001 akshay     mangaluru  8877891123 m outstanding
+4all4is001 akshay     mangaluru  8877891123 m average
+4all4is003 trupti     bengaluru  7712312314 f outstanding
+4all4is004 supriya    mangaluru  8877896121 f outstanding
+
+
+
+
+

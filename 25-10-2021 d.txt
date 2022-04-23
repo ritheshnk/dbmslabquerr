@@ -1,0 +1,42 @@
+CREATE TABLE contacts 
+(
+  name varchar(20),
+  mobn int,
+  maid varchar(20)
+); 
+
+Table created.
+
+SQL> insert into detail values
+  2  ('&name','&mobn','&mail');
+Enter value for name: a
+Enter value for mobn: 12345
+Enter value for mail: avsw@gmail.com
+old   2: ('&name','&mobn','&mail')
+new   2: ('a','12345','avsw@gmail.com')
+
+1 row created.
+
+SQL> insert into detail values
+  2  ('&name','&mobn','&mail');
+Enter value for name: asd
+Enter value for mobn: 253
+Enter value for mail: ad@gmail.com
+old   2: ('&name','&mobn','&mail')
+new   2: ('asd','253','ad@gmail.com')
+
+1 row created.
+
+SQL> select * from detail;
+
+NAME                       MOBN MAID
+-------------------- ---------- --------------------
+a                         12345 avsw@gmail.com
+asd                         253 ad@gmail.com
+
+SQL> desc detail
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ NAME                                               VARCHAR2(20)
+ MOBN                                               NUMBER(38)
+ MAID                                               VARCHAR2(20)

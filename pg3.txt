@@ -1,0 +1,307 @@
+
+
+SQL> CREATE TABLE ACTOR
+     (
+      Act_id varchar(3),
+      Act_name varchar(10),
+      Act_geneder varchar(1),
+      primary key(Act_id)
+    );
+
+
+SQL> CREATE TABLE DIRECTOR
+    (
+      Dir_id varchar(3),
+      Dir_name varchar(20),
+      Dir_phone varchar(10),
+      primary key(Dir_id)
+    );
+
+
+SQL> CREATE TABLE MOVIES
+    (
+      Mov_id varchar(3),
+      Mov_title varchar(20),
+      Mov_year int,
+      Mov_lan varchar(10),
+      Dir_id varchar(3),
+      primary key(Mov_id),
+      foreign key(Dir_id) references DIRECTOR(Dir_id) on delete set NULL
+    );
+
+Table created.
+
+
+SQL> CREATE TABLE MOVIE_CAST
+    (
+      Act_id varchar(3),
+      Mov_id varchar(3),
+      Role varchar(10),
+      primary key (Act_id,Mov_id),
+      foreign key(Act_id) references ACTOR(Act_id) on delete set NULL,
+      foreign key(Mov_id) references MOVIES(Mov_id) on delete set NULL
+    );
+
+Table created.
+
+
+
+
+SQL> CREATE TABLE RATING
+    (
+      Mov_id varchar(3),
+      Rev_stars int,
+      primary key (Mov_id,Rev_stars),
+      foreign key (Mov_id) references MOVIES(Mov_id) on delete set NULL
+    );
+
+Table created.
+
+SQL> insert into ACTOR values
+    ('&Act_id','&Act_name','&Act_gender');
+Enter value for act_id: a1
+Enter value for act_name: robert
+Enter value for act_gender: m
+old   2: ('&Act_id','&Act_name','&Act_gender')
+new   2: ('a1','robert','m')
+
+1 row created.
+
+SQL> insert into DIRECTOR values
+    ('&Dir_id','&Dir_name','&Dir_phone');
+Enter value for dir_id: d1
+Enter value for dir_name: hitchcock
+Enter value for dir_phone: 7069964357
+old   2: ('&Dir_id','&Dir_name','&Dir_phone')
+new   2: ('d1','hitchcock','7069964357')
+
+1 row created.
+
+SQL> insert into MOVIES values
+    ('&Mov_id','&Mov_title','&Mov_year','&Mov_lan','&Dir_id');
+Enter value for mov_id: m1
+Enter value for mov_title: iron man 1
+Enter value for mov_year: 1990
+Enter value for mov_lan: english
+Enter value for dir_id: d1
+old   2: ('&Mov_id','&Mov_title','&Mov_year','&Mov_lan','&Dir_id')
+new   2: ('m1','iron man 1','1990','english','d1')
+
+1 row created.
+
+
+insert into RATING values
+  2      ('&Mov','&Rev_stars');
+Enter value for mov: m1
+Enter value for rev_stars: 8
+old   2:     ('&Mov','&Rev_stars')
+new   2:     ('m1','8')
+
+1 row created.
+
+
+SQL> select * from ACTOR
+  2  ;
+
+ACT ACT_NAME   A
+--- ---------- -
+a1  robert     m
+a2  scarlett   f
+a3  puneeth    m
+a4  meera      f
+a5  prabhas    m
+a6  tamanna    f
+
+6 rows selected.
+
+
+SQL> select * from DIRECTOR
+  2  ;
+
+DIR DIR_NAME             DIR_PHONE
+--- -------------------- ----------
+d1  hitchcock            7069964357
+d2  steven spielberg     9444568910
+d3  mahesh babu          8765675304
+d4  rajamouli R          9765122452
+
+
+SQL> select * from MOVIES;
+
+MOV MOV_TITLE              MOV_YEAR MOV_LAN    DIR
+--- -------------------- ---------- ---------- ---
+m1  iron man 1                 1990 english    d1
+m2  VIP                        2001 Tamil      d2
+m3  munna                      1998 telugu     d3
+m4  john wick 3                2017 english    d1
+m5  bahubali 2                 2017 telugu     d4
+m6  iron man 3                 2016 english    d2
+
+6 rows selected.
+
+SQL> select * from MOVIE_CAST;
+
+ACT MOV ROLE
+--- --- ----------
+a1  m1  hero
+a5  m2  hero
+a1  m3  hero
+a2  m3  heroine
+a2  m5  guest
+a3  m4  hero
+a4  m4  heroine
+a1  m5  hero
+a5  m6  hero
+a6  m6  heroine
+
+10 rows selected.
+
+
+SQL> select * from RATING;
+
+MOV  REV_STARS
+--- ----------
+m1           4
+m1           8
+m2           4
+m2           9
+m3           6
+m4           8
+m5           7
+m6           9
+
+8 rows selected.
+
+
+
+
+SQL> select Mov_title
+  2  from MOVIES
+  3  where Dir_id IN(select Dir_id from DIRECTOR where Dir_name='hitchcock');
+
+MOV_TITLE
+--------------------
+iron man 1
+john wick 3
+
+
+SQL> select Dir_id from DIRECTOR
+  2  where Dir_name='hitchcock';
+
+DIR
+---
+d1
+
+
+SQL> select Act_id from MOVIE_CAST
+  2  group by Act_id having count(*)>1
+  3  ;
+
+ACT
+---
+a1
+a2
+a5
+
+SQL> select Mov_title, a.Act_name
+  2  from MOVIES m,MOVIE_CAST mc,ACTOR a
+  3  where m.Mov_id=mc.Mov_id
+  4  and mc.Act_id=a.Act_id
+  5  and mc.Act_id IN(select Act_id from MOVIE_CAST
+  6  group by Act_id having count(*)>1);
+
+MOV_TITLE            ACT_NAME
+-------------------- ----------
+iron man 1           robert
+munna                robert
+bahubali 2           robert
+munna                scarlett
+bahubali 2           scarlett
+VIP                  prabhas
+iron man 3           prabhas
+
+7 rows selected.
+
+SQL> select Mov_title
+  2  from MOVIES m,MOVIE_CAST mc
+  3  where m.Mov_id=mc.Mov_id
+  4  and mc.Act_id IN(select Act_id from MOVIE_CAST
+  5  group by Act_id having count(Act_id)>1)
+  6  group by Mov_title;
+
+MOV_TITLE
+--------------------
+bahubali 2
+iron man 1
+munna
+VIP
+iron man 3
+
+
+SQL> select Act_name,Mov_title,Mov_year
+  2  from ACTOR a
+  3  join MOVIE_CAST c
+  4    on a.Act_id=c.Act_id
+  5  join MOVIES m
+  6    on c.Mov_id=m.Mov_id
+  7  where m.Mov_year NOT BETWEEN 2000 and 2015;
+
+ACT_NAME   MOV_TITLE              MOV_YEAR
+---------- -------------------- ----------
+robert     iron man 1                 1990
+robert     munna                      1998
+robert     bahubali 2                 2017
+scarlett   munna                      1998
+scarlett   bahubali 2                 2017
+puneeth    john wick 3                2017
+meera      john wick 3                2017
+prabhas    iron man 3                 2016
+tamanna    iron man 3                 2016
+
+9 rows selected.
+
+
+SQL> select Mov_title,MAX(Rev_stars)
+  2  from MOVIES
+  3  INNER JOIN RATING using(Mov_id)
+  4  group by Mov_title
+  5  having MAX(Rev_stars)>0
+  6  order by Mov_title;
+
+MOV_TITLE            MAX(REV_STARS)
+-------------------- --------------
+VIP                               9
+bahubali 2                        7
+iron man 1                        8
+iron man 3                        9
+john wick 3                       8
+munna                             6
+
+6 rows selected.
+
+
+SQL> select Mov_title,MAX(Rev_stars)as BEST_RATING
+  2  from MOVIES m, RATING r
+  3  where m.Mov_id=r.Mov_id
+  4  and r.Rev_stars IS NOT NULL
+  5  group by Mov_title
+  6  order by Mov_title;
+
+MOV_TITLE            BEST_RATING
+-------------------- -----------
+VIP                            9
+bahubali 2                     7
+iron man 1                     8
+iron man 3                     9
+john wick 3                    8
+munna                          6
+
+6 rows selected.
+
+
+SQL> update RATING
+  2  set Rev_stars=5
+  3  where Mov_id IN(select Mov_id from MOVIES where Dir_id IN(select Dir_id from DIRECTOR
+  4  where Dir_name='stevenspielberg'));
+
+0 rows updated.

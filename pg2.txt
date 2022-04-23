@@ -1,0 +1,197 @@
+CREATE TABLE SALESMAN
+    (
+     salesman_id int,
+     name varchar(10),
+     city varchar(10),
+     commission int,
+     primary key(salesman_id)
+    );
+
+
+CREATE TABLE CUSTOMER
+(
+  customer_id int,
+  cust_name varchar(10),
+  city varchar(10),
+  grade int,
+  salesman_id int,
+  primary key(customer_id),
+  foreign key(salesman_id) References SALESMAN2(salesman_id)on delete set null
+);
+
+
+CREATE TABLE ORDERS
+(
+  ord_no int,
+  purchase_amt int,
+  ord_date date,
+  customer_id int,
+  salesman_id int,
+  primary key(ord_no),
+  foreign key(customer_id) references CUSTOMER(customer_id) on delete cascade,
+  foreign key(salesman_id) references SALESMAN2(salesman_id) on delete cascade
+); 
+
+
+
+SQL> insert into SALESMAN2 values
+    ('&salesman','&name','&city','&commission');
+Enter value for salesman: 1000
+Enter value for name: adit
+Enter value for city: mang
+Enter value for commission: 13
+old   2: ('&salesman','&name','&city','&commission')
+new   2: ('1000','adit','mang','13')
+
+1 row created
+
+
+
+SQL> select * from SALESMAN2
+    ;
+
+SALESMAN_ID NAME       CITY       COMMISSION
+----------- ---------- ---------- ----------
+       1000 adit       mang               13
+       1001 girish     banglore           22
+       1002 mukund     mysore             16
+       1003 saurabh    delhi              19
+       1004 srinivas   hydrabad           23
+       1005 mohan      ranchi             23
+
+6 rows selected.
+
+
+SQL> insert into CUSTOMER values
+     ('&customer_id','&cust_name','&city','&grade','&salesman_id');
+Enter value for customer_id: 1
+Enter value for cust_name: sharal
+Enter value for city: hydrabad
+Enter value for grade: 40
+Enter value for salesman_id: 1004
+old   2: ('&customer_id','&cust_name','&city','&grade','&salesman_id')
+new   2: ('1','sharal','hydrabad','40','1004')
+
+1 row created.
+SQL> select * from CUSTOMER;
+
+CUSTOMER_ID CUST_NAME  CITY            GRADE SALESMAN_ID
+----------- ---------- ---------- ---------- -----------
+          1 sharal     hydrabad           40        1004
+          2 meeenakshi mangalore          40        1000
+          3 vikky      mumbai             35        1002
+          4 john       mumbai             20        1002
+          5 george     bangalore          10        1001
+          6 hevin      bangalore          50        1001
+          7 roshan     delhi              45        1003
+          8 vimala     chennai            35        1001
+          9 nakul      ayodhya            15        1005
+
+9 rows selected
+
+SQL> insert into ORDERS values
+    ('&ord_no','&purchase_am','&ord_date','&customer_id','&salesman_id');
+Enter value for ord_no: 111
+Enter value for purchase_am: 50000
+Enter value for ord_date: 04-jan-17
+Enter value for customer_id: 1
+Enter value for salesman_id: 1004
+old   2: ('&ord_no','&purchase_am','&ord_date','&customer_id','&salesman_id')
+new   2: ('111','50000','04-jan-17','1','1004')
+
+1 row created.
+
+
+SQL> select * from ORDERS;
+
+    ORD_NO PURCHASE_AMT ORD_DATE  CUSTOMER_ID SALESMAN_ID
+---------- ------------ --------- ----------- -----------
+       111        50000 04-JAN-17           1        1004
+       222        45000 04-JAN-17           2        1000
+       333        10000 05-FEB-17           3        1002
+       444        35000 13-MAR-17           4        1003
+       555        75000 14-MAR-17           5        1001
+       666        25000 14-MAR-17           6        1004
+       777        50000 27-JUN-17           7        1003
+       888        52000 25-AUG-17           8        1001
+       991        37000 25-AUG-17           1        1004
+       993         6000 09-SEP-17           9        1005
+
+10 rows selected
+
+
+SQL> select grade,count (distinct customer_id) as Total_customers
+  2  from CUSTOMER
+  3  group by grade
+  4  having grade > (select AVG(grade) from CUSTOMER where city='bangalore');
+
+     GRADE TOTAL_CUSTOMERS
+---------- ---------------
+        35               2
+        40               2
+        50               1
+        45               1
+
+
+SQL> select s.salesman_id,s.name
+  2  from SALESMAN2 s
+  3  where(select COUNT(*) from CUSTOMER c
+  4  where c.salesman_id=s.Salesman_id)>1;
+
+SALESMAN_ID NAME
+----------- ----------
+       1001 girish
+       1002 mukund
+
+
+
+
+SQL> (select a.salesman_id,a.name,b.cust_name,a.commission,a.city
+  2  from SALESMAN2 a, CUSTOMER b
+  3  where a.city=b.city)
+  4  UNION
+  5  (select salesman_id,name,'no match',commission,city
+  6  from SALESMAN2
+  7  where not city=any(select city from CUSTOMER))
+  8  order by 2 DESc;
+
+SALESMAN_ID NAME       CUST_NAME  COMMISSION CITY
+----------- ---------- ---------- ---------- ----------
+       1004 srinivas   sharal             23 hydrabad
+       1003 saurabh    roshan             19 delhi
+       1002 mukund     no match           16 mysore
+       1005 mohan      no match           23 ranchi
+       1001 girish     no match           22 banglore
+       1000 adit       no match           13 mang
+
+6 rows selected.
+
+
+SQL> select a.salesman_id,a.name,b.cust_name,a.commission,a.city
+  2  from SALESMAN2 a , CUSTOMER b
+  3  where a.city = b.city;
+
+SALESMAN_ID NAME       CUST_NAME  COMMISSION CITY
+----------- ---------- ---------- ---------- ----------
+       1004 srinivas   sharal             23 hydrabad
+       1003 saurabh    roshan             19 delhi
+
+
+SQL> select * from TOPSALESMAN2;
+
+ORD_DATE  PURCHASE_AMT SALESMAN_ID NAME
+--------- ------------ ----------- ----------
+04-JAN-17        50000        1004 srinivas
+05-FEB-17        10000        1002 mukund
+13-MAR-17        35000        1003 saurabh
+14-MAR-17        75000        1001 girish
+27-JUN-17        50000        1003 saurabh
+25-AUG-17        52000        1001 girish
+09-SEP-17         6000        1005 mohan
+
+7 rows selected.
+
+SQL> delete from SALESMAN2 where salesman_id=1000
+  2  ;
+
+1 row deleted.

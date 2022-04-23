@@ -1,0 +1,388 @@
+CREATE TABLE EMPLOYEE
+(
+  Ssn varchar(8),
+  Fname varchar(10),
+  Lname varchar(10),
+  Address varchar(10),
+  Sex varchar(1),
+  Salary int,
+  Sup_Ssn varchar(8),
+  Dno int,
+  primary key(Ssn),
+  foreign key(Sup_Ssn) references EMPLOYEE(Ssn)
+);
+
+
+SQL> CREATE TABLE DEPARTMENT
+  2  (
+  3  Dno int,
+  4  Dname varchar(20),
+  5  MgrSsn varchar(8),
+  6  Mgr_sdate date,
+  7  primary key(Dno),
+  8  foreign key(MgrSsn) references EMPLOYEE (Ssn)
+  9  );
+
+Table created.
+
+
+SQL> CREATE TABLE DLOCATION
+  2  (
+  3   Dno int,
+  4   Dloc varchar(20),
+  5   primary key(Dno,Dloc),
+  6   foreign key(Dno) references DEPARTMENT (Dno)
+  7  );
+
+Table created.
+
+SQL> CREATE TABLE PROJECT
+  2  (
+  3   Pno int,
+  4  pname varchar(20),
+  5  Plocation varchar(20),
+  6  Dno int,
+  7  primary key(Pno),
+  8  foreign key(Dno) references DEPARTMENT (Dno)
+  9  );
+
+Table created.
+
+
+SQL> CREATE TABLE WORKS_ON
+  2  (
+  3   Pno int,
+  4  Ssn varchar(8),
+  5  Hours int,
+  6  primary key(Ssn,Pno),
+  7  foreign key(Ssn) references EMPLOYEE(Ssn),
+  8  foreign key(Pno) references PROJECT(Pno)
+  9  );
+
+Table created.
+
+
+SQL> desc EMPLOYEE;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ SSN                                       NOT NULL VARCHAR2(8)
+ FNAME                                              VARCHAR2(10)
+ LNAME                                              VARCHAR2(10)
+ ADDRESS                                            VARCHAR2(10)
+ SEX                                                VARCHAR2(1)
+ SALARY                                             NUMBER(38)
+ SUP_SSN                                            VARCHAR2(8)
+ DNO                                                NUMBER(38)
+
+SQL> desc DEPARTMENT;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ DNO                                       NOT NULL NUMBER(38)
+ DNAME                                              VARCHAR2(20)
+ MGRSSN                                             VARCHAR2(8)
+ MGR_SDATE                                          DATE
+
+SQL> desc DLOCATION;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ DNO                                       NOT NULL NUMBER(38)
+ DLOC                                      NOT NULL VARCHAR2(20)
+
+SQL> desc PROJECT;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ PNO                                       NOT NULL NUMBER(38)
+ PNAME                                              VARCHAR2(20)
+ PLOCATION                                          VARCHAR2(20)
+ DNO                                                NUMBER(38)
+
+SQL> desc WORKS_ON;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ PNO                                       NOT NULL NUMBER(38)
+ SSN                                       NOT NULL VARCHAR2(8)
+ HOURS                                              NUMBER(38)
+
+
+SQL> insert into EMPLOYEE values
+  2  ('&Ssn','&Fname','&Lname','&Address','&Sex','&Salary','&Sup_Ssn','&Dno');
+Enter value for ssn: alcs01
+Enter value for fname: john
+Enter value for lname: scott
+Enter value for address: bangalore
+Enter value for sex: m
+Enter value for salary: 2000000
+Enter value for sup_ssn:
+Enter value for dno:
+old   2: ('&Ssn','&Fname','&Lname','&Address','&Sex','&Salary','&Sup_Ssn','&Dno')
+new   2: ('alcs01','john','scott','bangalore','m','2000000','','')
+
+1 row created.
+
+SQL> select * from EMPLOYEE;
+
+SSN      FNAME      LNAME      ADDRESS    S     SALARY SUP_SSN         DNO
+-------- ---------- ---------- ---------- - ---------- -------- ----------
+alcs01   john       scott      bangalore  m    2000000
+alcs02   james      smith H    kolar      m    1500000 alcs01
+alcs03   william    baker      bangalore  m    1500000 alcs01
+alcs04   scott      elson      mysore     m    1500000 alcs01
+alcs05   pavan      hegede     mangalore  m    7000000 alcs02
+alcs06   girish     jain       mysore     m    1000000 alcs03
+alcs07   sneha      shetty     bangalore  f     609600 alcs02
+alcs08   aditi      hegde      mangalore  f     900000 alcs04
+alcs09   mythri     m          mysore     f     300000 alcs02
+alcs10   nagesh     tantri     bangalore  m     900000 alcs04
+alcs12   vignesh    g          bangalore  m     650000 alcs02
+
+SSN      FNAME      LNAME      ADDRESS    S     SALARY SUP_SSN         DNO
+-------- ---------- ---------- ---------- - ---------- -------- ----------
+alcs13   kaveri     k          mangalore  f     750000 alcs01
+
+12 rows selected.
+
+
+
+SQL> insert into DEPARTMENT values
+  2  ('&Dno','&Dname','&MgrSsn','&Mgr_sdate');
+Enter value for dno: 1
+Enter value for dname: accounts
+Enter value for mgrssn: alcs02
+Enter value for mgr_sdate: 01-jan-2001
+old   2: ('&Dno','&Dname','&MgrSsn','&Mgr_sdate')
+new   2: ('1','accounts','alcs02','01-jan-2001')
+
+1 row created.
+
+SQL> select * from DEPARTMENT;
+
+       DNO DNAME                MGRSSN   MGR_SDATE
+---------- -------------------- -------- ---------
+         1 accounts             alcs02   01-JAN-01
+         2 marketing            alcs03   11-AUG-16
+         3 it                   alcs04   23-MAR-08
+         4 production           alcs08   10-AUG-12
+         5 support              alcs01   05-MAR-11
+
+
+
+
+SQL> update EMPLOYEE set Dno=5 where Ssn='alcs02';
+
+1 row updated.
+
+
+
+SQL> select * from EMPLOYEE;
+
+SSN      FNAME      LNAME      ADDRESS    S     SALARY SUP_SSN         DNO
+-------- ---------- ---------- ---------- - ---------- -------- ----------
+alcs01   john       scott      bangalore  m    2000000                   1
+alcs02   james      smith H    kolar      m    1500000 alcs01            5
+alcs03   william    baker      bangalore  m    1500000 alcs01            2
+alcs04   scott      elson      mysore     m    1500000 alcs01            3
+alcs05   pavan      hegede     mangalore  m    7000000 alcs02            1
+alcs06   girish     jain       mysore     m    1000000 alcs03            2
+alcs07   sneha      shetty     bangalore  f     609600 alcs02            1
+alcs08   aditi      hegde      mangalore  f     900000 alcs04            4
+alcs09   mythri     m          mysore     f     300000 alcs02            1
+alcs10   nagesh     tantri     bangalore  m     900000 alcs04            1
+alcs12   vignesh    g          bangalore  m     650000 alcs02            3
+
+SSN      FNAME      LNAME      ADDRESS    S     SALARY SUP_SSN         DNO
+-------- ---------- ---------- ---------- - ---------- -------- ----------
+alcs13   kaveri     k          mangalore  f     750000 alcs01            5
+
+12 rows selected.
+
+
+SQL> insert into DLOCATION values
+  2  ('&Dno','&Dloc');
+Enter value for dno: 1
+Enter value for dloc: bangalore
+old   2: ('&Dno','&Dloc')
+new   2: ('1','bangalore')
+
+1 row created.
+
+SQL> select * from DLOCATION;
+
+       DNO DLOC
+---------- --------------------
+         1 bangalore
+         1 mangalore
+         2 bangalore
+         3 mangalore
+         3 tamil nadu
+         4 mysore
+         5 hubli
+
+7 rows selected.
+
+
+
+SQL> insert into PROJECT values
+  2  ('&Pno','&Pname','&Plocation','&Dno');
+Enter value for pno: 100
+Enter value for pname: market_s
+Enter value for plocation: bang
+Enter value for dno: 1
+old   2: ('&Pno','&Pname','&Plocation','&Dno')
+new   2: ('100','market_s','bang','1')
+
+1 row created.
+
+SQL> select * from PROJECT;
+
+       PNO PNAME                PLOCATION                   DNO
+---------- -------------------- -------------------- ----------
+       100 market_s             bang                          1
+       101 stock                b                             1
+       102 GST_b                ban                           2
+       103 T_cards              ban                           2
+       104 Jio_mon              ban                           2
+       105 iot                  mangalore                     3
+       106 Pro_xl               mumbai                        4
+       107 project_f            bang                          5
+       108 project_j            bang                          5
+
+9 rows selected.
+
+
+SQL> insert into WORKS_ON values
+  2  ('&Pno','&Ssn','&Hours');
+Enter value for pno: 100
+Enter value for ssn: alcs02
+Enter value for hours: 20
+old   2: ('&Pno','&Ssn','&Hours')
+new   2: ('100','alcs02','20')
+
+1 row created.
+
+
+SQL> select * from WORKS_ON;
+
+       PNO SSN           HOURS
+---------- -------- ----------
+       100 alcs02           20
+       100 alcs09           30
+       101 alcs10           10
+       101 alcs02           34
+       102 alcs12           24
+       102 alcs07           65
+       103 alcs03           69
+       104 alcs06           21
+       107 alcs13           34
+       107 alcs08           63
+       107 alcs01           27
+
+       PNO SSN           HOURS
+---------- -------- ----------
+       108 alcs13           10
+       108 alcs08           30
+       108 alcs05           20
+       105 alcs04           13
+
+15 rows selected.
+
+
+SQL> (select p.Pno
+  2  from PROJECT p,DEPARTMENT d,EMPLOYEE e
+  3  where p.Dno=d.Dno and d.MgrSsn=e.Ssn
+  4  and e.Lname='scott')
+  5  UNION
+  6  (select p1.Pno
+  7  from PROJECT p1, WORKS_ON w,EMPLOYEE e1
+  8  where p1.Pno=w.Pno and e1.Ssn=w.Ssn
+  9  and e1.Lname='scott');
+
+       PNO
+----------
+       107
+       108
+
+
+SQL> select e.Fname,e.Lname,1.1*e.Salary as incr_sal
+  2  from EMPLOYEE e,WORKS_ON w,PROJECT p
+  3  where e.Ssn=w.Ssn and w.Pno=p.Pno and p.Pname='iot';
+
+FNAME      LNAME        INCR_SAL
+---------- ---------- ----------
+scott      elson         1650000
+
+SQL> select sum(e.salary) as total_salary,max(e.salary) as max_salary,min(e.salary) as
+  2  min_salary,avg(e.salary) as average_salary
+  3  from EMPLOYEE e,DEPARTMENT d
+  4  where e.Dno=d.Dno
+  5  and d.Dname='accounts';
+
+TOTAL_SALARY MAX_SALARY MIN_SALARY AVERAGE_SALARY
+------------ ---------- ---------- --------------
+    10809600    7000000     300000        2161920
+
+SQL> select e.Fname,e.Lname from EMPLOYEE e
+  2  where NOT EXISTS(select * from WORKS_ON w where w.Pno IN (select p.Pno from
+  3  PROJECT p where p.Dno=5)
+  4  and NOT EXISTS (select * from WORKS_ON o where o.Ssn=e.Ssn and o.Pno=w.Pno));
+
+FNAME      LNAME
+---------- ----------
+aditi      hegde
+kaveri     k
+
+
+
+SQL> select d.Dno,count(*)
+  2  from DEPARTMENT d,EMPLOYEE e
+  3  where d.Dno=e.Dno
+  4  and e.Salary>600000 and d.Dno in (select e1.Dno
+  5  from EMPLOYEE e1
+  6  group by e1.Dno
+  7  having count(*)>5)
+  8  group by d.Dno;
+
+no rows selected
+
+SQL> select d.Dno,count(*)
+  2  from DEPARTMENT d,EMPLOYEE e
+  3  where d.Dno=e.Dno
+  4  and e.Salary>600000 and d.Dno in (select e1.Dno
+  5  from EMPLOYEE e1
+  6  group by e1.Dno
+  7  having count(*)>3)
+  8  group by d.Dno;
+
+       DNO   COUNT(*)
+---------- ----------
+         1          4
+
+
+
+SQL> select d.Dno,count(*)
+  2  from DEPARTMENT d,EMPLOYEE e
+  3  where d.Dno=e.Dno
+  4  and e.Salary>200000 and d.Dno in (select e1.Dno
+  5  from EMPLOYEE e1
+  6  group by e1.Dno
+  7  having count(*)>4)
+  8  group by d.Dno;
+
+       DNO   COUNT(*)
+---------- ----------
+         1          5
+
+
+SQL> select d.Dno,count(*)
+  2  from DEPARTMENT d,EMPLOYEE e
+  3  where d.Dno=e.Dno
+  4  and e.Salary>600000 and d.Dno in (select e1.Dno
+  5  from EMPLOYEE e1
+  6  group by e1.Dno
+  7  having count(*)>4)
+  8  group by d.Dno;
+
+       DNO   COUNT(*)
+---------- ----------
+         1          4
+
+
